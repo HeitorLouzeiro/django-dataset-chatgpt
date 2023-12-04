@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    {% include 'partials/_head.html' %}
+    <title>
+      {% block titulo %}
+
+      {% endblock %}Openai PDF
+    </title>
+    <style>
+      a {
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  {% block navbar %}
+    {% include 'partials/_nav.html' %}
+  {% endblock %}
+
+  <body>
+    {% include 'partials/_messages.html' %}
+    <main class="container mt-4 mb-4">
+      {% block content %}
+
+      {% endblock %}
+    </main>
+
+    {% include 'partials/_footer.html' %}
+  </body>
+</html>
