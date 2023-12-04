@@ -33,7 +33,7 @@ def home(request):
         user = request.user
         filename = file.name
         File.objects.create(file=file, namefile=filename, user=user)
-        return redirect(f'core:question' + '/' + str(File.objects.last().id))
+        return redirect(f'question' + '/' + str(File.objects.last().id))
 
     if request.user.is_authenticated:
         files = File.objects.filter(user=request.user)
