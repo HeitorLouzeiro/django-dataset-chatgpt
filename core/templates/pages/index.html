@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+  <form action="{% url 'core:home' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+      <div class="input-group">
+        <input type="file" class="form-control" name="file" aria-label="Upload" />
+        <button class="btn btn-outline-secondary" type="submit">Upload</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="row">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for file in files %}
+        <a href="{% url 'core:question' file.pk %}">
+          <div class="col">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5 class="card-title">{{ file }}</h5>
+              </div>
+              <div class="card-footer">
+                <small class="text-body-secondary">{{ file.uploaded_at }}</small>
+
+                <form action="{% url 'core:delete' file.pk %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-danger btn-sm float-end">Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
