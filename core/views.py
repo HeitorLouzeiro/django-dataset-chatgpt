@@ -55,38 +55,42 @@ def question(request, id):
 @csrf_exempt
 def query(request, id):
     if request.method == "POST":
-        # Lendo o arquivo csv
-        file_instance = File.objects.get(id=id)
-        file = file_instance.file.open()
+        try:
+            # Lendo o arquivo csv
+            file_instance = File.objects.get(id=id)
+            file = file_instance.file.open()
 
-        data = pd.read_csv(file, sep=',', header=0)
-        df = pd.DataFrame(data)
+            data = pd.read_csv(file, sep=',', header=0)
+            df = pd.DataFrame(data)
 
-        # Criando o agente com o dataframe
-        agent = create_pandas_dataframe_agent(
-            ChatOpenAI(temperature=0, model="gpt-3.5-turbo"),
-            df,
-            verbose=True,
-            agent_type=AgentType.OPENAI_FUNCTIONS,
-        )
+            # Criando o agente com o dataframe
+            agent = create_pandas_dataframe_agent(
+                ChatOpenAI(temperature=0.2, model="gpt-3.5-turbo"),
+                df,
+                verbose=True,
+                agent_type=AgentType.OPENAI_FUNCTIONS,
+            )
 
-        # Obter a consulta do corpo da solicitação
-        data = json.loads(request.body.decode("utf-8"))
-        query = data["input"]
+            # Obter a consulta do corpo da solicitação
+            data = json.loads(request.body.decode("utf-8"))
+            query = data["input"]
 
-        # Executar a consulta no agente
-        response = agent.run(query)
+            # Executar a consulta no agente
+            response = agent.run(query)
 
-        # Verifique se a resposta é uma string
-        if isinstance(response, str):
-            # Se for, defina a fonte como vazia, pois não há uma fonte formatada
-            source = ""
-        else:
-            # Caso contrário, obtenha a fonte formatada
-            source = response.get_formatted_sources()
+            # Verifique se a resposta é uma string
+            if isinstance(response, str):
+                # Se for, defina a fonte como vazia, pois não há uma fonte formatada
+                source = ""
+            else:
+                # Caso contrário, obtenha a fonte formatada
+                source = response.get_formatted_sources()
 
-        # Retornar a consulta, resposta e fonte como JSON
-        return JsonResponse({'query': query, 'response': str(response), 'source': source})
+            # Retornar a consulta, resposta e fonte como JSON
+            return JsonResponse({'success': True, 'query': query, 'response': str(response), 'source': source})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 
 @login_required(login_url='accounts:loginUser', redirect_field_name='next')

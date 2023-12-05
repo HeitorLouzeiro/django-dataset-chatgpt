@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  t = 0;
+  var t = 0;
   $("#send").click(function (e) {
     e.preventDefault();
     var prompt = $("#prompt").val().trimEnd();
@@ -14,7 +14,7 @@ $(document).ready(function () {
       const myInterval = setInterval(myTimer, 1000);
 
       var id = window.location.pathname.split('/').pop();
-            
+
       $.ajax({
         url: "/query/" + id,
         method: "POST",
@@ -22,15 +22,27 @@ $(document).ready(function () {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (data) {
-          $("#response").html("<p>" + data.response + "</p>");
-          $("#response").append(
-            "<small class='text-secondary'>Responded in " +
-              t +
-              " seconds</small>"
-          );
-          $("#source").html(
-            "<small class='text-secondary'>" + data.source + "</small>"
-          );
+          if (data.success) {
+            $("#response").html("<pre>" + data.response + "<pre>");
+            $("#response").append(
+              "<small class='text-secondary'>Responded in " +
+                t +
+                " seconds</small>"
+            );
+            $("#source").html(
+              "<small class='text-secondary'>" + data.source + "</small>"
+            );
+          } else {
+            // Se houver um erro, exiba a mensagem de erro
+            $("#response").html("<p>Error: " + data.error + "</p>");
+          }
+          clearInterval(myInterval);
+          t = 0;
+        },
+        error: function (xhr, status, error) {
+          // Lidar com erros de requisição AJAX
+          console.error('Erro AJAX:', error);
+          $("#response").html("<p>Error: " + error + "</p>");
           clearInterval(myInterval);
           t = 0;
         },
