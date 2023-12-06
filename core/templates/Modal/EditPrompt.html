@@ -1,0 +1,31 @@
+<button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ prompt.id }}">Edit</button>
+
+<!-- Modal -->
+<div class="modal fade" id="editModal{{ prompt.id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editModalLabel">Edit {{ prompt.titlePrompt }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'core:editPrompt' file_obj.id prompt.id %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-body">
+          <input type="hidden" name="prompt_id" value="{{prompt.id}}" />
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" name="titlePrompt" placeholder="Tile Prompt" value="{{prompt.titlePrompt}}" />
+            <label for="floatingInput">Tile Prompt</label>
+          </div>
+          <div class="form-floating">
+            <textarea class="form-control" placeholder="Leave a Prompt here" id="floatingTextarea2" name="prompt" style="height: 100px" >{{prompt.prompt}}</textarea>
+            <label for="floatingTextarea2">Prompt</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-warning">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

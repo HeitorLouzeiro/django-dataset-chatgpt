@@ -88,6 +88,32 @@ def createPrompt(request, id):
 
 
 @login_required(login_url='accounts:loginUser', redirect_field_name='next')
+def editPrompt(request, id, prompt_id):
+    if not request.POST:
+        raise Http404()
+
+    prompt = get_object_or_404(Prompts, id=prompt_id, user=request.user)
+
+    if request.method == 'POST':
+        # Corrigido para 'title_prompt'
+        title_prompt = request.POST.get('titlePrompt')
+        # Corrigido para 'prompt_text'
+        prompt_text = request.POST.get('prompt')
+
+        if title_prompt == '' or prompt_text == '':
+            messages.info(request, 'Title or Prompt is empty')
+            return redirect(reverse('core:question', args=[id]))
+
+        prompt.titlePrompt = title_prompt
+        prompt.prompt = prompt_text
+        prompt.save()
+
+        return redirect(reverse('core:question', args=[id]))
+
+    return redirect(reverse('core:question', args=[id]))
+
+
+@login_required(login_url='accounts:loginUser', redirect_field_name='next')
 @csrf_exempt
 def query(request, id):
     if request.method == "POST":
