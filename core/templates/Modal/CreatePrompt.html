@@ -1,0 +1,36 @@
+<div class="d-grid gap-2">
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPrompt">Create Prompt</button>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="createPrompt" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="Modal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{% url 'core:createPrompt' file_obj.id %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Create Prompt</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" name="titlePrompt" placeholder="Tile Prompt" />
+            <label for="floatingInput">Tile Prompt</label>
+          </div>
+          <div class="form-floating">
+            <textarea class="form-control" placeholder="Leave a Prompt here" id="floatingTextarea2" name="prompt" style="height: 100px"></textarea>
+            <label for="floatingTextarea2">Prompt</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="flexCheckDefault" name="selectPrompt" />
+            <label class="form-check-label" for="flexCheckDefault">Prompt Ativo</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

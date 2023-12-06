@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
   <div class="container">
+    <div class="mb-3">
+      {% include '../Modal/CreatePrompt.html' %}
+    </div>
     <div class="row row-cols-1 row-cols-md-2 g-4">
       {% for prompt in prompts %}
         <div class="col">
@@ -12,9 +15,9 @@
               <div class="card-footer">
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                   {% if prompt.selected %}
-                    <button class="btn btn-outline-success" type="button">active</button>
-                  {% else %}
                     <button class="btn btn-outline-danger" type="button">Disabled</button>
+                  {% else %}
+                    <button class="btn btn-outline-success" type="button">active</button>
                   {% endif %}
                 </div>
               </div>

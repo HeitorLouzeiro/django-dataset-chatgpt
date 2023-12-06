@@ -3,8 +3,9 @@ import json
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.http import Http404, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from langchain.agents.agent_types import AgentType
 from langchain.chat_models import ChatOpenAI
@@ -49,12 +50,41 @@ def home(request):
 def question(request, id):
     template_name = "pages/questions.html"
     prompts = Prompts.objects.filter(file=id, user=request.user)
+    file_obj = File.objects.filter(id=id, user=request.user).first()
 
     context = {
-        'prompts': prompts
+        'prompts': prompts,
+        'file_obj': file_obj
     }
 
     return render(request, template_name, context)
+
+
+@login_required(login_url='accounts:loginUser', redirect_field_name='next')
+def createPrompt(request, id):
+    if not request.POST:
+        raise Http404()
+
+    if request.method == 'POST':
+        title = request.POST.get('titlePrompt')
+        prompt = request.POST.get('prompt')
+        selected = request.POST.get('selectPrompt')
+
+        if selected == 'on':
+            selected = True
+        else:
+            selected = False
+
+        file_object = get_object_or_404(File, id=id, user=request.user)
+
+        if title == '' or prompt == '':
+            messages.info(request, 'Title or Prompt is empty')
+            return redirect(reverse('core:question', args=[id]))
+
+        Prompts.objects.create(
+            titlePrompt=title, prompt=prompt, selected=selected, file=file_object, user=request.user)
+
+        return redirect(reverse('core:question', args=[id]))
 
 
 @login_required(login_url='accounts:loginUser', redirect_field_name='next')
