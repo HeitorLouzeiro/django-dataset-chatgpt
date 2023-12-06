@@ -4,7 +4,7 @@
     <div class="mb-3">
       {% include '../Modal/CreatePrompt.html' %}
     </div>
-    <div class="row row-cols-1 row-cols-md-2 g-4">
+    <div class="row row-cols-1 row-cols-md-4 g-4">
       {% for prompt in prompts %}
         <div class="col">
           <div class="card-group">
@@ -16,11 +16,15 @@
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                   {% include '../Modal/EditPrompt.html' %}
                   {% include '../Modal/DeletePrompt.html' %}
-                  {% if prompt.selected %}
-                    <button class="btn btn-outline-danger" type="button">Disabled</button>
-                  {% else %}
-                    <button class="btn btn-outline-success" type="button">active</button>
-                  {% endif %}
+
+                  <form action="{% url 'core:selectPrompt' file_obj.id prompt.id %}" method="post">
+                    {% csrf_token %}
+                    {% if prompt.selected %}
+                      <button class="btn btn-outline-primary" type="submit" name="select">Disabled</button>
+                    {% else %}
+                      <button class="btn btn-outline-success" type="submit" name="select">Active</button>
+                    {% endif %}
+                  </form>
                 </div>
               </div>
             </div>

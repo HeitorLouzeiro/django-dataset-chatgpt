@@ -131,6 +131,25 @@ def deletePrompt(request, id, prompt_id):
 
 
 @login_required(login_url='accounts:loginUser', redirect_field_name='next')
+def selectPrompt(request, id, prompt_id):
+    if not request.POST:
+        raise Http404()
+
+    if request.method == "POST":
+        prompt = get_object_or_404(Prompts, id=prompt_id, user=request.user)
+
+        # Alternar o estado do campo 'selected'
+        # Negar o valor atual de 'selected'
+        prompt.selected = not prompt.selected
+
+        prompt.save()
+
+        messages.success(request, 'Data successfully selected!')
+
+        return redirect(reverse('core:question', args=[id]))
+
+
+@login_required(login_url='accounts:loginUser', redirect_field_name='next')
 @csrf_exempt
 def query(request, id):
     if request.method == "POST":

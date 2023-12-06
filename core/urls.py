@@ -12,6 +12,8 @@ urlpatterns = [
          views.editPrompt, name='editPrompt'),
     path('deletePrompt/<int:id>/<int:prompt_id>',
          views.deletePrompt, name='deletePrompt'),
+    path('selectPrompt/<int:id>/<int:prompt_id>',
+         views.selectPrompt, name='selectPrompt'),
     path('query/<int:id>', views.query, name='query'),
     path('delete/<int:id>', views.delete, name='delete'),
 ]
