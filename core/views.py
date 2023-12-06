@@ -12,7 +12,7 @@ from langchain_experimental.agents.agent_toolkits import \
     create_pandas_dataframe_agent
 
 # Create your views here.
-from .models import File
+from .models import File, Prompts
 
 
 @login_required(login_url='accounts:loginUser', redirect_field_name='next')
@@ -48,7 +48,13 @@ def home(request):
 @login_required(login_url='accounts:loginUser', redirect_field_name='next')
 def question(request, id):
     template_name = "pages/questions.html"
-    return render(request, template_name)
+    prompts = Prompts.objects.filter(file=id, user=request.user)
+
+    context = {
+        'prompts': prompts
+    }
+
+    return render(request, template_name, context)
 
 
 @login_required(login_url='accounts:loginUser', redirect_field_name='next')
@@ -63,6 +69,13 @@ def query(request, id):
             data = pd.read_csv(file, sep=',', header=0)
             df = pd.DataFrame(data)
 
+            promptsStatic = Prompts.objects.filter(file=id, user=request.user)
+
+            promptSelected = []
+            for prompt in promptsStatic:
+                if prompt.selected:
+                    promptSelected.append(prompt)
+
             # Criando o agente com o dataframe
             agent = create_pandas_dataframe_agent(
                 ChatOpenAI(temperature=0.2, model="gpt-3.5-turbo"),
@@ -70,10 +83,14 @@ def query(request, id):
                 verbose=True,
                 agent_type=AgentType.OPENAI_FUNCTIONS,
             )
-
             # Obter a consulta do corpo da solicitação
             data = json.loads(request.body.decode("utf-8"))
             query = data["input"]
+
+            query = '\n'.join(
+                [selected_prompt.prompt for selected_prompt in promptSelected]) + '\n' + query
+
+            # print(query)
 
             # Executar a consulta no agente
             response = agent.run(query)
