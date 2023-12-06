@@ -1,0 +1,24 @@
+<button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ prompt.id }}">Delete</button>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal{{ prompt.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteModalLabel">Delete {{ prompt.titlePrompt }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url "core:deletePrompt" file_obj.id prompt.id%}" method="POST">
+        {% csrf_token %}
+        <div class="modal-body">
+          <h3>Are you sure you want to delete {{ prompt.titlePrompt }}?</h3>
+          <h3>This action cannot be reversed.</h3>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-danger">Delete Data</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
